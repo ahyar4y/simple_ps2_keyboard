@@ -1,1 +1,1 @@
-C:\AMDDesignTools\2025.2\Vivado\bin\vivado.bat -mode batch -source lab2_matmul.tcl
+C:\AMDDesignTools\2025.2\Vivado\bin\vivado.bat -mode batch -source build.tcl

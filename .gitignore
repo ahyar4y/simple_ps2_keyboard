@@ -3,3 +3,4 @@ simple_ps2_keyboard/
 *.log
 *.jou
 *.str
+dfx_runtime.txt
