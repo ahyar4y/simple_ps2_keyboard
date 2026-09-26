@@ -1,0 +1,5 @@
+simple_ps2_keyboard/
+.Xil/
+*.log
+*.jou
+*.str
