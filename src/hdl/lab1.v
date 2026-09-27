@@ -30,7 +30,7 @@ module lab1(
     
     wire kb_negedge;
     wire valid;
-    wire [9:0]char_o;
+    wire [7:0]char_o;
     
     kb_sync kb_sync1(
         .clk (sys_clk),

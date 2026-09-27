@@ -29,8 +29,14 @@ module kb_sync(
     
     reg previous_value;
     
-    always @(posedge clk) begin
-        kb_negedge_o <= (previous_value == 1'b1) & (kb_clk == 1'b0);
-        previous_value <= kb_clk;
+    always @(posedge clk or negedge reset) begin
+        if (!reset) begin
+            kb_negedge_o <= 0;
+            previous_value <= 0;
+        end else
+            begin
+                kb_negedge_o <= (previous_value == 1'b1) & (kb_clk == 1'b0);
+                previous_value <= kb_clk;
+            end
     end
 endmodule

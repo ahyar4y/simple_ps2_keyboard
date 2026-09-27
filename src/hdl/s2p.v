@@ -26,42 +26,49 @@ module s2p(
     input wire kb_negedge,
     input wire kb_data,
     output reg valid_o,
-    output reg [9:0]char_o
+    output reg [7:0]char_o
     );
     
     reg [1:0]state = 2'b00;
+    reg [9:0]shift_reg = 10'b0;
     reg [3:0]count = 0;
     
-    always @(state or kb_negedge) begin
-        case (state)
-        2'b00:
-              count = 0;
-        2'b10: 
-            if (kb_negedge) begin
-                char_o = {kb_data, char_o[9:1]};
-                count = count + 1;
+    always @(posedge clk or negedge reset) begin
+        if (!reset) begin
+                count <= 0;
+                valid_o <= 0;
+                shift_reg <= 0;
+                char_o <= 0;
+                state <= 0;
             end
-        endcase
-    end
-    
-    always @(posedge kb_negedge) begin
-        if (!reset)
-            state <= 2'b00;
-        else
+        else begin
+            valid_o <= 0;
+            
             case (state)
-            2'b00: //idle
-                if (!kb_data) begin
+            2'b00: begin
+                if (kb_negedge & !kb_data)
                     state <= 2'b01;
-                    char_o <= 10'b0;
+                    
+                count <= 0;
+                shift_reg <= 0;
+                char_o <= 0;
+            end
+            2'b01: begin
+                if (kb_negedge) begin
+                    shift_reg <= {kb_data, shift_reg[9:1]};
+                    count <= count + 1;
+                    
+                    if (count == 9) begin
+                        state <= 2'b00;
+                        
+                        if (kb_data == 1'b1) begin
+                            char_o <= shift_reg[8:1];
+                            valid_o <= 1'b1;
+                        end
+                    end 
                 end
-            2'b01: //start
-                state <= 2'b10;
-            2'b10: //receive
-                if (count == 10) begin
-                    state <= 2'b00;
-                    valid_o <= char_o[9:9] == 1'b1;
-                end else
-                    valid_o <= 0;
+            end
             endcase
+        end
     end
 endmodule
